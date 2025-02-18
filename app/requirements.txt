@@ -4,5 +4,7 @@ pydantic == 1.9.1
 numpy == 1.22.4
 uvicorn == 0.17.6
 boto3 == 1.24.9
-transformers
 python-multipart
+torch
+torchvision
+faiss-cpu
