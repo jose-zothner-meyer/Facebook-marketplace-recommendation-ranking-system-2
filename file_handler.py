@@ -1,4 +1,4 @@
-from time import time
+from time import time, strftime
 import pickle
 import os
 import json
@@ -8,11 +8,11 @@ import pandas as pd
 class FileHandler:
 
     @staticmethod
-    def create_model_dir(self, base_dir='data/model_evaluation'):
+    def create_model_dir(base_dir='data/model_evaluation'):
         """
         Create a timestamped directory (with a subfolder for weights) to store model outputs.
         """
-        timestamp = time.strftime('%Y%m%d-%H%M%S')
+        timestamp = strftime('%Y%m%d-%H%M%S')
         model_dir = os.path.join(base_dir, f'model_{timestamp}')
         weights_dir = os.path.join(model_dir, 'weights')
         os.makedirs(weights_dir, exist_ok=True)
@@ -34,7 +34,7 @@ class FileHandler:
     @staticmethod
     def save_json(obj, filepath, filename, mode: str = "w"):
         os.makedirs(filepath, exist_ok=True)
-        with open(filepath + filename, mode) as f:
+        with open(filepath + "/" + filename, mode) as f:
             json.dump(obj, f)
         print(f"The obj {obj} was pickled and saved to {filepath}")
 

@@ -164,8 +164,8 @@ class FaceBookSimSearchModel:
 
                 avg_train_loss = total_loss / len(dataset)
                 train_accuracy = train_correct / train_total
-                print(f'Epoch [{epoch + 1}/{epochs}], Training Loss: {avg_train_loss:.4f}, '
-                f'Training Accuracy: {train_accuracy:.4f}')
+                print(f'Epoch [{epoch + 1}/{epochs}], Validation Loss: {avg_train_loss:.4f}, '
+                f'Validation Accuracy: {train_accuracy:.4f}')
                 self.writer.add_scalar('avg training loss', avg_train_loss, epoch)
                 self.writer.add_scalar('train accuracy', train_accuracy, epoch)
             
@@ -193,10 +193,10 @@ class FaceBookSimSearchModel:
             self.writer.add_scalar('validation loss', avg_val_loss, epoch)
             self.writer.add_scalar('validation accuracy', val_accuracy, epoch)
             self.writer.flush()
-            self._save_model_weights("data/output/model_evaluation/weights", f'epoch_{epoch + 1}.pth')
+            self._save_model_weights("data\\eval\\weights", f'epoch_{epoch + 1}.pth')
             print(f'Epoch [{epoch + 1}/{epochs}], Validation Loss: {avg_val_loss:.4f}, '
                 f'Validation Accuracy: {val_accuracy:.4f}')
-        self._save_model_weights("data/output/final_model", 'image_model.pth')
+        self._save_model_weights("data/output/training/weights", f'epoch_{epoch + 1}.pth')
         self._generate_embeddings(dataset)
 
     def close_writer(self):
@@ -222,6 +222,9 @@ class FaceBookSimSearchModel:
 
                 # Store the embedding using the image filename as the key
                 image_embeddings[str(img_name)] = embedding.tolist()
-        FileHandler.save_json(image_embeddings, "data/output/", "image_embeddings.json")
-        FileHandler.pickle_obj(image_embeddings, "data/output/image_embeddings.pkl")
-        print(f"Image embeddings successfully saved as 'image_embeddings.json' and 'image_embeddings.pkl'")
+        FileHandler.save_json(image_embeddings, "data/output", "image_embeddings.json")
+        FileHandler.pickle_obj(image_embeddings, "data/output", "image_embeddings.pkl")
+        print("Image embeddings successfully saved")
+
+
+       

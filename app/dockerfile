@@ -1,17 +1,25 @@
 FROM python:3.8
 
-RUN apt-get update
-RUN apt-get install \
-    'ffmpeg'\
-    'libsm6'\
-    'libxext6'  -y
-RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
-COPY requirements.txt .
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y ffmpeg libsm6 libxext6
 
+# Install PyTorch (CPU version)
+RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency file and install API requirements
+COPY requirements.txt .
 RUN pip3 install -r requirements.txt
 
-COPY . .
+# Copy the rest of the code and application files!!!
+COPY image_decoder.pkl .
+COPY jose_api_template.py .
 
+# Expose the API port
 EXPOSE 8080
 
-CMD ["python3", "api.py"]
+# Start the API using uvicorn
+CMD ["uvicorn", "jose_api_template:app", "--host", "0.0.0.0", "--port", "8080"]
