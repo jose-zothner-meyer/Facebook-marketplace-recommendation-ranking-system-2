@@ -7,6 +7,7 @@ import torchvision.transforms as transforms
 
 # Import the model to extract features
 from resNet import FineTunedResNet
+from file_handler import FileHandler
 import json
 
 # Load the saved dictionary containing {image_id: embedding}
@@ -20,6 +21,7 @@ embeddings = np.array(list(embeddings_dict.values()), dtype=np.float32)
 dimension = embeddings.shape[1]  # Dimension of each embedding vector
 index = faiss.IndexFlatL2(dimension)
 index.add(embeddings)
+pickle.dump(index, open('data/output/faiss_index.pkl', 'wb'))
 
 # Example usage: query the index with the first embedding (for testing)
 D, I = index.search(embeddings[:1], k=5)

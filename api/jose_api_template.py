@@ -10,6 +10,9 @@ from fastapi import Form
 import torch
 import torch.nn as nn
 from pydantic import BaseModel
+from resNet import FineTunedResNet
+from torchvision import models
+from torchvision.models import ResNet50_Weights
 ##############################################################
 # TODO                                                       #
 # Import your image processing script here                   #
@@ -17,16 +20,11 @@ import image_processor
 # This script is purely to apply transforms onto raw images!!
 ##############################################################
 
-# COPY PASTE YOUR FineTunedResNet class here!!!!
-
 try:
-#################################################################
-# TODO                                                          #
-# 1. Initialise the FineTunedResNet model
-# 2. load in the weights    
-# 3. Convert to the FeatureExtractor using that 1 line    #                         
-# Do not make a new class just for the FeatureExtractor         #
-#################################################################
+    model = FineTunedResNet(13)
+    saved_weights = 'data/model_evaluation/model_20250211-192554/weights/epoch_5.pth'  # update if needed
+    model.load_state_dict(torch.load(saved_weights, map_location="cpu"))
+    model = torch.nn.Sequential(*list(model.combined_model.children())[:-1])
     pass
 except:
     raise OSError("Error in creating Feature Extractor")
@@ -35,7 +33,7 @@ try:
 ##################################################################
 # TODO                                                           #
 # 1. Load faiss index.pkl
-# 2. Load image embedding ids.pkl
+# 2. Load image embedding ids.pkl OR json file
 ##################################################################
     pass
 except:
