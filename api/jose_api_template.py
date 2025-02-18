@@ -30,11 +30,9 @@ except:
     raise OSError("Error in creating Feature Extractor")
 
 try:
-##################################################################
-# TODO                                                           #
-# 1. Load faiss index.pkl
-# 2. Load image embedding ids.pkl OR json file
-##################################################################
+    faiss_index = pickle.load(open("data/output/faiss_index.pkl", "rb"))
+    image_embeddings = pickle.load(open("data/output/image_embeddings.pkl", "rb"))
+    image_ids = pickle.load(open("data/output/image_ids.pkl", "rb"))
     pass
 except:
     raise OSError("No Image model found. Check that you have the encoder and the model in the correct location")
@@ -51,19 +49,31 @@ def healthcheck():
   
 @app.post('/predict/similar_images')
 def predict_combined(image: UploadFile = File(...)):
-    pil_image = Image.open(image.file)
-    
-    #####################################################################
-    # TODO                                                              #
-    # 1. Take a raw image
-    # 2. apply necessary transforms onto it
-    # 3. Put transformed image through the FeatureExtractor. That will get you the embeddings.
-    # 4. Use these embeddings with your faiss code to get the similar images          
-    #####################################################################
+    # Step 1: Load the raw image
+    pil_image = Image.open(image.file).convert("RGB")
+
+    # Step 2: Apply necessary transforms using your image_processor module
+    # Instantiate ImageProcessor and use its transformer method to get the pipeline.
+    img_proc = image_processor.ImageProcessor()
+    transformer = img_proc.transformer()
+    processed_image = transformer(pil_image)
+    # Ensure the image tensor has a batch dimension
+    if processed_image.dim() == 3:
+        processed_image = processed_image.unsqueeze(0)
+
+    # Step 3: Extract embeddings using the FeatureExtractor (model is already setup to act as one)
+    with torch.no_grad():
+        embedding_tensor = model(processed_image)
+        # Flatten and convert to numpy array; reformat as 2D (batch, dimension)
+        embedding = embedding_tensor.flatten().detach().cpu().numpy().reshape(1, -1)
+
+    # Step 4: Use the FAISS index to get similar images
+    D, I = faiss_index.search(embedding, k=5)
+    similar_images = [image_ids[idx] for idx in I[0]]
 
     return JSONResponse(content={
-    "similar_index": "", # Return the index of similar images here
-        })
+        "similar_index": similar_images
+    })
     
     
 if __name__ == '__main__':
