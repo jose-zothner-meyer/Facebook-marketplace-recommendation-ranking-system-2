@@ -15,13 +15,14 @@ with open('data/output/image_embeddings.json', 'r') as f:
     embeddings_dict = json.load(f)
 
 image_ids = list(embeddings_dict.keys())
+FileHandler.pickle_obj(image_ids, "data/output/image_ids.pkl")
 embeddings = np.array(list(embeddings_dict.values()), dtype=np.float32)
 
 # Create a FAISS index
 dimension = embeddings.shape[1]  # Dimension of each embedding vector
 index = faiss.IndexFlatL2(dimension)
 index.add(embeddings)
-pickle.dump(index, open('data/output/faiss_index.pkl', 'wb'))
+FileHandler.pickle_obj(index, "data/output/faiss_index.pkl")
 
 # Example usage: query the index with the first embedding (for testing)
 D, I = index.search(embeddings[:1], k=5)

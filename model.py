@@ -223,4 +223,5 @@ class FaceBookSimSearchModel:
                 # Store the embedding using the image filename as the key
                 image_embeddings[str(img_name)] = embedding.tolist()
         FileHandler.save_json(image_embeddings, "data/output/", "image_embeddings.json")
-        print(f"Image embeddings successfully saved")
+        FileHandler.pickle_obj(image_embeddings, "data/output/image_embeddings.pkl")
+        print(f"Image embeddings successfully saved as 'image_embeddings.json' and 'image_embeddings.pkl'")
