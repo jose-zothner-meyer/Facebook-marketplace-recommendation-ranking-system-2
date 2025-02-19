@@ -225,6 +225,3 @@ class FaceBookSimSearchModel:
         FileHandler.save_json(image_embeddings, "data/output", "image_embeddings.json")
         FileHandler.pickle_obj(image_embeddings, "data/output", "image_embeddings.pkl")
         print("Image embeddings successfully saved")
-
-
-       
